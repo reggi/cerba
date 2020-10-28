@@ -1,6 +1,6 @@
 {
-  "name": "@reggi/node-generate",
-  "version": "1.0.7",
+  "name": "cerba",
+  "version": "1.0.0",
   "description": "This is a starter project for TypeScript and Node.js",
   "repository": {
     "type": "git",
