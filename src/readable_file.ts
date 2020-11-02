@@ -14,7 +14,7 @@ export class ReadableFile extends Path {
         return this.cacheContent;
       } catch (e) {
         if (this.props?.defaultContent) {
-          this.cacheContent = this.props?.defaultContent;
+          this.cacheContent = this.props.defaultContent;
           return this.cacheContent;
         }
         throw e;

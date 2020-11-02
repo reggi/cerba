@@ -6,7 +6,8 @@
     "outDir": "build",
     "target": "es5",
     "strictNullChecks": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "inlineSources": true,
   },
   "include": [
     "src/**/*.ts"

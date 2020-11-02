@@ -7,10 +7,11 @@ export class ParseableFile<T = string> extends File {
     })();
   }
   stringify(content?: T): string {
-    return JSON.stringify(content, null, 2) || '{}';
+    if (typeof content === 'string') return content;
+    throw new Error('Unimplemented default stringify.');
   }
   parse(content: string): T {
-    return JSON.parse(content);
+    return (content as unknown) as T;
   }
   // eslint-disable-next-line
   finalize(content: T, rawContent: string): string {

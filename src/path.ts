@@ -4,7 +4,6 @@ import * as nodePath from 'path';
 export enum PathType {
   file = 'file',
   directory = 'directory',
-  unknown = 'unknown',
   missing = 'missing',
 }
 
@@ -66,12 +65,13 @@ export class Path {
     return (async () => {
       if (this.cacheType) return this.cacheType;
       const type = await (async () => {
-        if (this.cacheType) return this.cacheType;
         try {
           const stat = await fs.stat(this.path);
           if (stat.isDirectory()) return PathType.directory;
+          /* istanbul ignore next */
           if (stat.isFile()) return PathType.file;
-          return PathType.unknown;
+          /* istanbul ignore next */
+          throw new Error('File type not recognized.');
         } catch (e) {
           return PathType.missing;
         }

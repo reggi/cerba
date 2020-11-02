@@ -1,4 +1,3 @@
-import {File} from './file';
 import {ParseableFile} from './parsable_file';
 
 export type JSONValue = null | number | string | boolean | JSONValue[] | {[k: string]: undefined | JSONValue};
@@ -6,6 +5,12 @@ export type JSONValue = null | number | string | boolean | JSONValue[] | {[k: st
 export type JSONObject = {[k: string]: undefined | JSONValue};
 
 export class JSONFile<T extends JSONObject = JSONObject> extends ParseableFile<T> {
+  stringify(content?: T): string {
+    return JSON.stringify(content, null, 2) || '{}';
+  }
+  parse(content: string): T {
+    return JSON.parse(content);
+  }
   get parsedContent(): Promise<T> {
     return (async () => {
       return this.parse(await this.content);
@@ -47,17 +52,12 @@ export class JSONFile<T extends JSONObject = JSONObject> extends ParseableFile<T
   }
   /** @see https://stackoverflow.com/a/48666737/340688 */
   static unsetDeep(obj: JSONObject, key: string) {
-    if (!obj || !key) {
-      return;
-    }
     const path = key.split('.');
     for (let i = 0; i < path.length - 1; i++) {
       const v = obj[path[i]];
+      console.log(v);
       if (typeof v === 'object' && v && !Array.isArray(v)) {
         obj = v;
-      }
-      if (typeof obj === 'undefined') {
-        return;
       }
     }
     const value = path.pop();
