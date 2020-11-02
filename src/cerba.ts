@@ -5,21 +5,18 @@ import {PackageJSON} from './package_json';
 import {TsConfig} from './tsconfig';
 
 export class Cerba {
-  constructor(public props?: {cwd?: string; main?: string}) {}
+  constructor(public props?: {cwd?: string; main?: string; name?: string; scope?: string}) {}
   get cwd() {
     return this.props?.cwd || process.cwd();
   }
   get config() {
-    return new CerbaConfig({cwd: this.cwd});
+    return new CerbaConfig({cwd: this.cwd, scope: this.props?.scope});
   }
   get tsConfig() {
     return new TsConfig({cwd: this.cwd, readonly: true});
   }
   get packageJSON() {
     return new PackageJSON({cwd: this.cwd, readonly: true});
-  }
-  get versionTable() {
-    return new JSONFile({cwd: this.cwd, basename: 'versions.json'});
   }
   private cachePackages?: CerbaPackage[];
   get packages(): Promise<CerbaPackage[]> {
@@ -49,6 +46,9 @@ export class Cerba {
     throw new Error(`Unable to find package "${name}" within cerba config.`);
   }
   async build() {
+    if (this.props?.name) {
+      return this.buildPackage(this.props?.name);
+    }
     const packages = await this.packages;
     return Promise.all(
       packages.map(p => {
@@ -56,13 +56,10 @@ export class Cerba {
       })
     );
   }
-  async buildPackage(name: string) {
-    const file = await this.findPackage(name);
+  async buildPackage(name?: string) {
+    const n = this.props?.name ?? name;
+    if (!n) throw new Error('Unable to build package, no package name provided');
+    const file = await this.findPackage(n);
     return file.build();
   }
 }
-
-(async () => {
-  const pkg = new Cerba({main: './src/cerba.ts'});
-  await pkg.build();
-})().catch(console.log);

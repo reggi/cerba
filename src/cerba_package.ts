@@ -11,11 +11,23 @@ export class CerbaPackage extends BabelFile {
     super({basename: props.main, ...props});
     this.props = {basename: props.main, ...props};
   }
+  getName(): {name?: string; scope?: string} {
+    const split = this.props?.name?.split('/');
+    if (!split) return {};
+    if (split && split.length === 1) return {name: split[0]};
+    return {name: split[1], scope: split[2]};
+  }
   get name() {
-    return this.props?.name || this.coreBasename;
+    if (this.scope) return `${this.scope}/${this.id}`;
+    return `${this.id}`;
   }
   get id() {
-    return this.props?.name?.split('/')[0] || this.coreBasename;
+    const {name} = this.getName();
+    return name || this.coreBasename;
+  }
+  get scope() {
+    const {scope} = this.getName();
+    return scope || this.config.scope;
   }
   get config() {
     return this.props.config;
@@ -26,6 +38,16 @@ export class CerbaPackage extends BabelFile {
       return path.join(packagesDir, this.id);
     })();
   }
+
+  get version() {
+    return (async () => {
+      const p = await this.package;
+      const version = await p.version;
+      if (version) return version;
+      return await this.config.initialVersion;
+    })();
+  }
+
   /** moves files to the packagesDir */
   async moveFiles() {
     const files = await this.recursiveSiblings;
@@ -47,10 +69,12 @@ export class CerbaPackage extends BabelFile {
   get packageContent() {
     return (async () => {
       const dependencies = await this.dependencies;
+      const version = await this.version;
       const results: PackageJSONType = {
         name: this.name,
       };
       const {description, main, bin} = this.props;
+      if (version) results.version = version;
       if (description) results.description = description;
       if (main) results.main = await this.mapJavascriptFiles(main);
       if (bin) results.bin = await this.mapJavascriptFiles(bin);

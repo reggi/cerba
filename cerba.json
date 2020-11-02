@@ -1,0 +1,8 @@
+{
+  "packages": [{
+    "name": "cerba",
+    "main": "./src/cerba.ts",
+    "bin": "./src/bin.ts",
+    "description": "Tool for generating monorepos"
+  }]
+}
