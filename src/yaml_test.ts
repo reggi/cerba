@@ -2,7 +2,7 @@ import * as yaml from 'yaml';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as mock from 'mock-fs';
-import {YAML} from './YAML';
+import {YAML} from './yaml';
 import {deepStrictEqual, strictEqual} from 'assert';
 const cwd = process.cwd();
 const here = (filename: string) => path.join(cwd, filename);
