@@ -17,11 +17,9 @@ export class BabelFile extends ParseableFile<BabelNodes> {
     super({...props, ...defaults});
     this.props = {...props, ...defaults};
   }
-
   get pkg() {
     return this.props?.pkg ?? new PackageJSON({cwd: this.cwd});
   }
-
   /** @see https://stackoverflow.com/a/54003496/340688 */
   static getBuiltins() {
     try {
@@ -71,7 +69,6 @@ export class BabelFile extends ParseableFile<BabelNodes> {
       return (await this.imports).filter(BabelFile.isNativeImport);
     })();
   }
-
   get packageRecursiveImports() {
     return (async () => {
       return (await this.recursiveImports).filter(BabelFile.isNodePackageImport);
@@ -87,14 +84,12 @@ export class BabelFile extends ParseableFile<BabelNodes> {
       return (await this.recursiveImports).filter(BabelFile.isNativeImport);
     })();
   }
-
   get plugins() {
     return this.props?.plugins || ['typescript', 'classProperties', 'classPrivateProperties'];
   }
   get modifyDependency() {
     return this.props?.modifyDependency;
   }
-
   private cacheParsedContent?: BabelNodes;
   parse(content: string): BabelNodes {
     if (this.cacheParsedContent) return this.cacheParsedContent;
@@ -104,7 +99,6 @@ export class BabelFile extends ParseableFile<BabelNodes> {
     });
     return this.cacheParsedContent;
   }
-
   private cacheImports?: string[];
   get imports(): Promise<string[]> {
     return (async () => {
@@ -130,19 +124,16 @@ export class BabelFile extends ParseableFile<BabelNodes> {
           }
         },
       });
-
       imports = imports.map(i => {
         if (BabelFile.isLocalImport(i)) {
           return path.join(this.dirname, `${i}${this.extname}`);
         }
         return i;
       });
-
       this.cacheImports = imports;
       return this.cacheImports;
     })();
   }
-
   static uniqueString(a: string[]) {
     function onlyUnique(value: string, index: number, self: string[]) {
       return self.indexOf(value) === index;
@@ -150,23 +141,18 @@ export class BabelFile extends ParseableFile<BabelNodes> {
     const unique = a.filter(onlyUnique); // returns ['a', 1, 2, '1']
     return unique;
   }
-
   private cacheSiblingFiles: {[key: string]: BabelFile} = {};
   private cacheRecursiveImports: string[] = [];
-
   private fileCacheCheck(path: string) {
     return typeof this.cacheSiblingFiles[path] !== 'undefined';
   }
-
   private fileCacheAdd(file: BabelFile) {
     this.cacheSiblingFiles[file.path] = file;
   }
-
   private async recursiveImportAdd(file: BabelFile) {
     const imports = await file.imports;
     this.cacheRecursiveImports = BabelFile.uniqueString([...this.cacheRecursiveImports, ...imports]);
   }
-
   get recursiveDependencies(): Promise<[string[], {[key: string]: BabelFile}]> {
     return (async (): Promise<[string[], {[key: string]: BabelFile}]> => {
       if (this.cacheRecursiveImports.length !== 0) {
@@ -189,7 +175,6 @@ export class BabelFile extends ParseableFile<BabelNodes> {
       return [this.cacheRecursiveImports, this.cacheSiblingFiles];
     })();
   }
-
   get recursiveImports() {
     return (async () => {
       const [imports] = await this.recursiveDependencies;
@@ -202,7 +187,6 @@ export class BabelFile extends ParseableFile<BabelNodes> {
       return Object.values(siblings);
     })();
   }
-
   /** Given a package json file, will pluck all npm dependencies */
   get dependencies(): Promise<{[k: string]: string}> {
     return (async () => {

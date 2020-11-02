@@ -24,7 +24,7 @@ export class File extends WritableFile {
   }
   async copy(dest: ConstructorParameters<typeof Path>[0] | Path) {
     const destPath = dest instanceof Path ? dest : new Path({cwd: this.cwd, ...dest});
-    await fs.copyFile(this.path, destPath.path);
+    await fs.copy(this.path, destPath.path);
   }
   async move(dest: ConstructorParameters<typeof Path>[0] | Path) {
     const destPath = dest instanceof Path ? dest : new Path({cwd: this.cwd, ...dest});

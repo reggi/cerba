@@ -46,14 +46,15 @@ export class CerbaPackage extends BabelFile {
   /** returns the package json for this file */
   get packageContent() {
     return (async () => {
+      const dependencies = await this.dependencies;
       const results: PackageJSONType = {
         name: this.name,
-        description: this.props?.description,
-        dependencies: await this.dependencies,
       };
-      const {main, bin} = this.props;
+      const {description, main, bin} = this.props;
+      if (description) results.description = description;
       if (main) results.main = await this.mapJavascriptFiles(main);
       if (bin) results.bin = await this.mapJavascriptFiles(bin);
+      if (dependencies) results.dependencies = dependencies;
       return results;
     })();
   }

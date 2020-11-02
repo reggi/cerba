@@ -16,7 +16,7 @@ export class Cerba {
     return new TsConfig({cwd: this.cwd, readonly: true});
   }
   get packageJSON() {
-    return new PackageJSON({cwd: this.cwd, basename: 'package.json', readonly: true});
+    return new PackageJSON({cwd: this.cwd, readonly: true});
   }
   get versionTable() {
     return new JSONFile({cwd: this.cwd, basename: 'versions.json'});
@@ -29,40 +29,40 @@ export class Cerba {
         const config = this.config;
         const main = this.props?.main;
         const cwd = this.cwd;
-        if (main) return [new CerbaPackage({config, cwd, main})];
+        const pkg = this.packageJSON;
+        if (main) return [new CerbaPackage({config, cwd, pkg, main})];
         const parsedContent = await this.config.parsedContent;
         const packages = parsedContent.packages || [];
         return packages.map(pack => {
-          return new CerbaPackage({config, cwd, ...pack});
+          return new CerbaPackage({config, cwd, pkg, ...pack});
         });
       })();
       this.cachePackages = op;
       return op;
     })();
   }
-  async findPackageByName(name: string) {
+  async findPackage(name: string) {
     const pkgs = await this.packages;
     if (!pkgs) throw new Error(`Unable to find package "${name}" within cerba config.`);
     const results = pkgs.find(pkg => pkg.name === name);
     if (results) return results;
     throw new Error(`Unable to find package "${name}" within cerba config.`);
   }
-  // async buildAll() {
-  //   const packages = await this.packages;
-  //   return Promise.all(
-  //     packages.map(p => {
-  //       return p.build();
-  //     })
-  //   );
-  // }
-  // async buildPackageByName(name: string) {
-  //   const file = await this.findPackageByName(name);
-  //   return file.build();
-  // }
+  async build() {
+    const packages = await this.packages;
+    return Promise.all(
+      packages.map(p => {
+        return p.build();
+      })
+    );
+  }
+  async buildPackage(name: string) {
+    const file = await this.findPackage(name);
+    return file.build();
+  }
 }
 
 (async () => {
-  const pkg = new Cerba({main: './src/path.ts'});
-  const cerbaPackage = await pkg.findPackageByName('path');
-  await cerbaPackage.build();
+  const pkg = new Cerba({main: './src/cerba.ts'});
+  await pkg.build();
 })().catch(console.log);

@@ -12,7 +12,7 @@ export interface PackageJSONType extends JSONObject {
   dependencies?: {[key: string]: string};
 }
 
-const defaults = {basename: 'package.json', defaultContent: '{}', readonly: true};
+const defaults = {basename: 'package.json', defaultContent: '{}'};
 
 export class PackageJSON extends JSONFile<PackageJSONType> {
   constructor(public props?: ConstructorParameters<typeof JSONFile>[0]) {
