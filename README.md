@@ -1,20 +1,20 @@
-# node-generate
+# cerba
 
-[![semantic release](https://github.com/reggi/node-generate/workflows/semantic%20release/badge.svg)](https://github.com/reggi/node-generate/actions?query=workflow%3A%22semantic+release%22) [![coverage](https://github.com/reggi/node-generate/workflows/coverage/badge.svg)](https://reggi.github.io/node-generate/) [![npm](https://badge.fury.io/js/%40reggi%2Fnode-generate.svg)](https://www.npmjs.com/package/@reggi/node-generate)
+[![semantic release](https://github.com/reggi/cerba/workflows/semantic%20release/badge.svg)](https://github.com/reggi/cerba/actions?query=workflow%3A%22semantic+release%22) [![coverage](https://github.com/reggi/cerba/workflows/coverage/badge.svg)](https://reggi.github.io/cerba/) [![npm](https://badge.fury.io/js/cerba.svg)](https://www.npmjs.com/package/cerba)
 
-This is a starter project for TypeScript and Node.js
+Tool to help build monorepo projects.
 
 ## Install
 
 ```
-npm install @reggi/node-generate -g
-node-generate
+npm install cerba -g
+cerba
 ```
 
 ## Use directly via `npx`
 
 ```
-npx @reggi/node-generate
+npx cerba
 ```
 
 <!-- anything below this line will be safe from template removal -->

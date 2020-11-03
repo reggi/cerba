@@ -1,7 +1,7 @@
 {
   "name": "cerba",
   "version": "1.0.0",
-  "description": "This is a starter project for TypeScript and Node.js",
+  "description": "Tool to help build monorepo projects.",
   "repository": {
     "type": "git",
     "url": "https://github.com/reggi/cerba.git"
