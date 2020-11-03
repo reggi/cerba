@@ -85,8 +85,9 @@ export class BabelFile extends ParseableFile<BabelNodes> {
       return (await this.recursiveImports).filter(BabelFile.isNativeImport);
     })();
   }
-  get plugins() {
-    return this.props.plugins || ['typescript', 'classProperties', 'classPrivateProperties'];
+  get plugins(): babelParser.ParserPlugin[] {
+    if (this.props.plugins && this.props.plugins.length) return this.props.plugins;
+    return ['typescript', 'classProperties', 'classPrivateProperties'];
   }
   // get modifyDependency() {
   //   return this.props?.modifyDependency;
