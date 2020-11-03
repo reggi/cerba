@@ -18,3 +18,9 @@ npx cerba
 ```
 
 <!-- anything below this line will be safe from template removal -->
+
+## Why
+
+I created this tool as an alternative to the classic monorepo approach, where
+you could write code as a monorepo, and pluck out packages you'd wish to publish
+as their own module.
