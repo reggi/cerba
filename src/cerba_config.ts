@@ -19,7 +19,7 @@ export type CerbaConfigPkg = NonNullable<CerbaConfigType['packages']>[number];
 const defaults = {basename: 'cerba.json', defaultContent: '{}', readonly: true};
 
 export class CerbaConfig extends JSONFile<CerbaConfigType> {
-  constructor(public props?: ConstructorParameters<typeof JSONFile>[0] & {scope?: string}) {
+  constructor(public props: ConstructorParameters<typeof JSONFile>[0] & {scope?: string} = defaults) {
     super({...props, ...defaults});
     this.props = {...props, ...defaults};
   }
@@ -48,6 +48,6 @@ export class CerbaConfig extends JSONFile<CerbaConfigType> {
     })();
   }
   get scope(): string | undefined {
-    return this.props?.scope;
+    return this.props.scope;
   }
 }

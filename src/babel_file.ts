@@ -8,17 +8,17 @@ import {PackageJSON} from './package_json';
 const defaults = {readonly: true};
 export class BabelFile extends ParseableFile<BabelNodes> {
   constructor(
-    public props?: ConstructorParameters<typeof ParseableFile>[0] & {
+    public props: ConstructorParameters<typeof ParseableFile>[0] & {
       plugins?: babelParser.ParserPlugin[];
-      modifyDependency?: (dep: string) => string;
+      // modifyDependency?: (dep: string) => string;
       pkg?: PackageJSON;
-    }
+    } = defaults
   ) {
     super({...props, ...defaults});
     this.props = {...props, ...defaults};
   }
   get pkg() {
-    return this.props?.pkg ?? new PackageJSON({cwd: this.cwd});
+    return this.props.pkg ?? new PackageJSON({cwd: this.cwd});
   }
   /** @see https://stackoverflow.com/a/54003496/340688 */
   static getBuiltins() {
@@ -28,6 +28,7 @@ export class BabelFile extends ParseableFile<BabelNodes> {
       // eslint-disable-next-line node/no-unsupported-features/node-builtins
       return result.builtinModules;
     } catch (e) {
+      /* istanbul ignore next */
       // prettier-ignore
       return [
         'assert',         'buffer',   'child_process',
@@ -85,11 +86,11 @@ export class BabelFile extends ParseableFile<BabelNodes> {
     })();
   }
   get plugins() {
-    return this.props?.plugins || ['typescript', 'classProperties', 'classPrivateProperties'];
+    return this.props.plugins || ['typescript', 'classProperties', 'classPrivateProperties'];
   }
-  get modifyDependency() {
-    return this.props?.modifyDependency;
-  }
+  // get modifyDependency() {
+  //   return this.props?.modifyDependency;
+  // }
   private cacheParsedContent?: BabelNodes;
   parse(content: string): BabelNodes {
     if (this.cacheParsedContent) return this.cacheParsedContent;
@@ -107,21 +108,23 @@ export class BabelFile extends ParseableFile<BabelNodes> {
       const content = await this.parsedContent;
       babelTraverse(content, {
         CallExpression: astPath => {
+          /* istanbul ignore next */
           if ('name' in astPath.node?.callee) {
             if (astPath.node?.callee?.name === 'require') {
               const arg = astPath.node.arguments[0];
+              /* istanbul ignore next */
               if ('value' in arg && typeof arg.value === 'string') {
                 imports.push(arg.value);
-                if (this.modifyDependency) arg.value = this.modifyDependency(arg.value);
+                // if (this.modifyDependency) arg.value = this.modifyDependency(arg.value);
               }
             }
           }
         },
         ImportDeclaration: astPath => {
           imports.push(astPath.node.source.value);
-          if (this.modifyDependency) {
-            astPath.node.source.value = this.modifyDependency(astPath.node.source.value);
-          }
+          // if (this.modifyDependency) {
+          //   astPath.node.source.value = this.modifyDependency(astPath.node.source.value);
+          // }
         },
       });
       imports = imports.map(i => {
